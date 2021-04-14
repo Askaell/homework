@@ -1,13 +1,20 @@
 package service
 
-import "github.com/Askaell/homework/repository"
+import (
+	GoArchitecture "github.com/Askaell/homework"
+	"github.com/Askaell/homework/repository"
+)
 
 type Item interface {
+	Create(item GoArchitecture.Item) (newItem *GoArchitecture.Item, e error)
 }
 
 type Service struct {
+	Item
 }
 
 func NewService(repository *repository.Repository) *Service {
-	return &Service{}
+	return &Service{
+		Item: NewItemService(repository.Item),
+	}
 }

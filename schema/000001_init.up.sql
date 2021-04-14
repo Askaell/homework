@@ -1,4 +1,4 @@
-CREATE TABLE items
+CREATE TABLE item
 (
     id serial not null unique,
     name varchar(255) not null,
