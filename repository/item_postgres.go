@@ -47,3 +47,12 @@ func (r *ItemPostgres) GetAll() ([]GoArchitecture.Item, error) {
 
 	return items, err
 }
+
+func (r *ItemPostgres) GetById(itemId int) (GoArchitecture.Item, error) {
+	var item GoArchitecture.Item
+
+	query := fmt.Sprintf("SELECT * FROM %s WHERE item.id = $1", itemTable)
+	err := r.db.Get(&item, query, itemId)
+
+	return item, err
+}

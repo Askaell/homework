@@ -20,3 +20,7 @@ func (s *ItemService) Create(item GoArchitecture.Item) (*GoArchitecture.Item, er
 func (s *ItemService) GetAll() ([]GoArchitecture.Item, error) {
 	return s.repository.GetAll()
 }
+
+func (s *ItemService) GetById(itemId int) (GoArchitecture.Item, error) {
+	return s.repository.GetById(itemId)
+}

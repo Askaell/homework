@@ -8,6 +8,7 @@ import (
 type Item interface {
 	Create(item GoArchitecture.Item) (*GoArchitecture.Item, error)
 	GetAll() ([]GoArchitecture.Item, error)
+	GetById(itemId int) (GoArchitecture.Item, error)
 }
 
 type Service struct {
