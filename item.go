@@ -1,8 +1,8 @@
 package GoArchitecture
 
 type Item struct {
-	Id          int     `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float32 `json:"price"`
+	Id          int     `json:"id" db:"id"`
+	Name        string  `json:"name" db:"name"`
+	Description string  `json:"description" db:"description"`
+	Price       float32 `json:"price" db:"price"`
 }

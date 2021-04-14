@@ -38,3 +38,12 @@ func (r *ItemPostgres) Create(item GoArchitecture.Item) (newItem *GoArchitecture
 
 	return newItem, transaction.Commit()
 }
+
+func (r *ItemPostgres) GetAll() ([]GoArchitecture.Item, error) {
+	var items []GoArchitecture.Item
+
+	query := fmt.Sprintf("SELECT * FROM %s", itemTable)
+	err := r.db.Select(&items, query)
+
+	return items, err
+}

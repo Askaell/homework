@@ -16,3 +16,7 @@ func NewItemService(repository repository.Item) *ItemService {
 func (s *ItemService) Create(item GoArchitecture.Item) (newItem *GoArchitecture.Item, e error) {
 	return s.repository.Create(item)
 }
+
+func (s *ItemService) GetAll() ([]GoArchitecture.Item, error) {
+	return s.repository.GetAll()
+}

@@ -27,8 +27,20 @@ func (h *Handler) createItem(c *gin.Context) {
 	})
 }
 
-func (h *Handler) getAllItem(c *gin.Context) {
+type getAllItemsResponse struct {
+	Data []GoArchitecture.Item `json:"data"`
+}
 
+func (h *Handler) getAllItems(c *gin.Context) {
+	items, err := h.services.Item.GetAll()
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, getAllItemsResponse{
+		Data: items,
+	})
 }
 
 func (h *Handler) getItemById(c *gin.Context) {
