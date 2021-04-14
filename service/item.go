@@ -13,7 +13,7 @@ func NewItemService(repository repository.Item) *ItemService {
 	return &ItemService{repository: repository}
 }
 
-func (s *ItemService) Create(item GoArchitecture.Item) (newItem *GoArchitecture.Item, e error) {
+func (s *ItemService) Create(item GoArchitecture.Item) (*GoArchitecture.Item, error) {
 	return s.repository.Create(item)
 }
 

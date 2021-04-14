@@ -15,7 +15,7 @@ func NewItemPostgres(db *sqlx.DB) *ItemPostgres {
 	return &ItemPostgres{db: db}
 }
 
-func (r *ItemPostgres) Create(item GoArchitecture.Item) (newItem *GoArchitecture.Item, e error) {
+func (r *ItemPostgres) Create(item GoArchitecture.Item) (*GoArchitecture.Item, error) {
 	transaction, err := r.db.Begin()
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (r *ItemPostgres) Create(item GoArchitecture.Item) (newItem *GoArchitecture
 		return nil, err
 	}
 
-	newItem = &GoArchitecture.Item{
+	newItem := &GoArchitecture.Item{
 		Id:          id,
 		Name:        item.Name,
 		Description: item.Description,

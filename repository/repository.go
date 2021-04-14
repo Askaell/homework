@@ -6,7 +6,7 @@ import (
 )
 
 type Item interface {
-	Create(item GoArchitecture.Item) (newItem *GoArchitecture.Item, e error)
+	Create(item GoArchitecture.Item) (*GoArchitecture.Item, error)
 	GetAll() ([]GoArchitecture.Item, error)
 }
 
