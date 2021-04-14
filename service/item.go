@@ -24,3 +24,7 @@ func (s *ItemService) GetAll() ([]GoArchitecture.Item, error) {
 func (s *ItemService) GetById(itemId int) (GoArchitecture.Item, error) {
 	return s.repository.GetById(itemId)
 }
+
+func (s *ItemService) Delete(itemId int) error {
+	return s.repository.Delete(itemId)
+}

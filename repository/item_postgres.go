@@ -56,3 +56,10 @@ func (r *ItemPostgres) GetById(itemId int) (GoArchitecture.Item, error) {
 
 	return item, err
 }
+
+func (r *ItemPostgres) Delete(itemId int) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE item.id = $1", itemTable)
+	_, err := r.db.Exec(query, itemId)
+
+	return err
+}
