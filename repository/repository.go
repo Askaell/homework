@@ -1,23 +1,23 @@
 package repository
 
 import (
-	GoArchitecture "github.com/Askaell/homework"
+	"github.com/Askaell/homework/models"
 	"github.com/jmoiron/sqlx"
 )
 
-type Item interface {
-	Create(item GoArchitecture.Item) (*GoArchitecture.Item, error)
-	GetAll() ([]GoArchitecture.Item, error)
-	GetById(itemId int) (GoArchitecture.Item, error)
+type ItemRepository interface {
+	Create(item models.Item) (*models.Item, error)
+	GetAll() ([]models.Item, error)
+	GetById(itemId int) (models.Item, error)
 	Delete(itemId int) error
 }
 
 type Repository struct {
-	Item
+	ItemRepository
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
-		Item: NewItemPostgres(db),
+		ItemRepository: NewItemPostgres(db),
 	}
 }

@@ -4,44 +4,33 @@ import (
 	"net/http"
 	"strconv"
 
-	GoArchitecture "github.com/Askaell/homework"
+	"github.com/Askaell/homework/models"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) createItem(c *gin.Context) {
-	var input GoArchitecture.Item
+	var input models.Item
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	newItem, err := h.services.Item.Create(input)
+	newItem, err := h.service.Item.Create(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":          newItem.Id,
-		"name":        newItem.Name,
-		"description": newItem.Description,
-		"price":       newItem.Price,
-	})
-}
-
-type getAllItemsResponse struct {
-	Data []GoArchitecture.Item `json:"data"`
+	c.JSON(http.StatusOK, newItem)
 }
 
 func (h *Handler) getAllItems(c *gin.Context) {
-	items, err := h.services.Item.GetAll()
+	items, err := h.service.Item.GetAll()
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, getAllItemsResponse{
-		Data: items,
-	})
+	c.JSON(http.StatusOK, items)
 }
 
 func (h *Handler) getItemById(c *gin.Context) {
@@ -51,7 +40,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 		return
 	}
 
-	item, err := h.services.Item.GetById(id)
+	item, err := h.service.Item.GetById(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -67,13 +56,11 @@ func (h *Handler) deleteItem(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Item.Delete(id)
+	err = h.service.Item.Delete(id)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, statusResponse{
-		Status: "ok",
-	})
+	c.JSON(http.StatusNoContent, nil)
 }

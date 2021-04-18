@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	GoArchitecture "github.com/Askaell/homework"
 	"github.com/Askaell/homework/handler"
 	"github.com/Askaell/homework/repository"
+	"github.com/Askaell/homework/server"
 	"github.com/Askaell/homework/service"
 	"github.com/spf13/viper"
 
@@ -33,12 +33,12 @@ func main() {
 	}
 
 	repository := repository.NewRepository(db)
-	services := service.NewService(repository)
-	handlers := handler.NewHandler(services)
+	service := service.NewService(repository)
+	handler := handler.NewHandler(service)
 
-	server := new(GoArchitecture.Server)
+	server := new(server.Server)
 	go func() {
-		if err := server.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
+		if err := server.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
 			log.Fatalf("error occured while running http server, %s", err.Error())
 		}
 	}()

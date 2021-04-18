@@ -1,6 +1,6 @@
 module github.com/Askaell/homework
 
-go 1.14
+go 1.16
 
 require (
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
@@ -21,6 +21,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1 // indirect
 	github.com/ugorji/go v1.2.5 // indirect
+	golang.org/dl v0.0.0-20210401214017-5e9de8bfb3b7 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
 	golang.org/x/sys v0.0.0-20210412220455-f1c623a9e750 // indirect
 	golang.org/x/text v0.3.6 // indirect

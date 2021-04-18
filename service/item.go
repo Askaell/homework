@@ -1,27 +1,27 @@
 package service
 
 import (
-	GoArchitecture "github.com/Askaell/homework"
+	"github.com/Askaell/homework/models"
 	"github.com/Askaell/homework/repository"
 )
 
 type ItemService struct {
-	repository repository.Item
+	repository repository.ItemRepository
 }
 
-func NewItemService(repository repository.Item) *ItemService {
+func NewItemService(repository repository.ItemRepository) *ItemService {
 	return &ItemService{repository: repository}
 }
 
-func (s *ItemService) Create(item GoArchitecture.Item) (*GoArchitecture.Item, error) {
+func (s *ItemService) Create(item models.Item) (*models.Item, error) {
 	return s.repository.Create(item)
 }
 
-func (s *ItemService) GetAll() ([]GoArchitecture.Item, error) {
+func (s *ItemService) GetAll() ([]models.Item, error) {
 	return s.repository.GetAll()
 }
 
-func (s *ItemService) GetById(itemId int) (GoArchitecture.Item, error) {
+func (s *ItemService) GetById(itemId int) (models.Item, error) {
 	return s.repository.GetById(itemId)
 }
 

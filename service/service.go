@@ -1,14 +1,14 @@
 package service
 
 import (
-	GoArchitecture "github.com/Askaell/homework"
+	"github.com/Askaell/homework/models"
 	"github.com/Askaell/homework/repository"
 )
 
 type Item interface {
-	Create(item GoArchitecture.Item) (*GoArchitecture.Item, error)
-	GetAll() ([]GoArchitecture.Item, error)
-	GetById(itemId int) (GoArchitecture.Item, error)
+	Create(item models.Item) (*models.Item, error)
+	GetAll() ([]models.Item, error)
+	GetById(itemId int) (models.Item, error)
 	Delete(itemId int) error
 }
 
@@ -18,6 +18,6 @@ type Service struct {
 
 func NewService(repository *repository.Repository) *Service {
 	return &Service{
-		Item: NewItemService(repository.Item),
+		Item: NewItemService(repository.ItemRepository),
 	}
 }

@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	GoArchitecture "github.com/Askaell/homework"
+	"github.com/Askaell/homework/models"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -15,7 +15,7 @@ func NewItemPostgres(db *sqlx.DB) *ItemPostgres {
 	return &ItemPostgres{db: db}
 }
 
-func (r *ItemPostgres) Create(item GoArchitecture.Item) (*GoArchitecture.Item, error) {
+func (r *ItemPostgres) Create(item models.Item) (*models.Item, error) {
 	transaction, err := r.db.Begin()
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (r *ItemPostgres) Create(item GoArchitecture.Item) (*GoArchitecture.Item, e
 		return nil, err
 	}
 
-	newItem := &GoArchitecture.Item{
+	newItem := &models.Item{
 		Id:          id,
 		Name:        item.Name,
 		Description: item.Description,
@@ -39,8 +39,8 @@ func (r *ItemPostgres) Create(item GoArchitecture.Item) (*GoArchitecture.Item, e
 	return newItem, transaction.Commit()
 }
 
-func (r *ItemPostgres) GetAll() ([]GoArchitecture.Item, error) {
-	var items []GoArchitecture.Item
+func (r *ItemPostgres) GetAll() ([]models.Item, error) {
+	var items []models.Item
 
 	query := fmt.Sprintf("SELECT * FROM %s", itemTable)
 	err := r.db.Select(&items, query)
@@ -48,8 +48,8 @@ func (r *ItemPostgres) GetAll() ([]GoArchitecture.Item, error) {
 	return items, err
 }
 
-func (r *ItemPostgres) GetById(itemId int) (GoArchitecture.Item, error) {
-	var item GoArchitecture.Item
+func (r *ItemPostgres) GetById(itemId int) (models.Item, error) {
+	var item models.Item
 
 	query := fmt.Sprintf("SELECT * FROM %s WHERE item.id = $1", itemTable)
 	err := r.db.Get(&item, query, itemId)

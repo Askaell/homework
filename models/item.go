@@ -1,4 +1,4 @@
-package GoArchitecture
+package models
 
 type Item struct {
 	Id          int     `json:"id" db:"id"`

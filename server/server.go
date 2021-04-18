@@ -1,4 +1,4 @@
-package GoArchitecture
+package server
 
 import (
 	"context"
