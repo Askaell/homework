@@ -3,7 +3,7 @@ package repository
 import (
 	"fmt"
 
-	"github.com/Askaell/homework/models"
+	"github.com/Askaell/homework/pkg/models"
 	"github.com/jmoiron/sqlx"
 )
 

@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/Askaell/homework/models"
+	"github.com/Askaell/homework/pkg/models"
 	"github.com/jmoiron/sqlx"
 )
 

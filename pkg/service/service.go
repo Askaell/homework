@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/Askaell/homework/models"
-	"github.com/Askaell/homework/repository"
+	"github.com/Askaell/homework/pkg/models"
+	"github.com/Askaell/homework/pkg/repository"
 )
 
 type Item interface {
