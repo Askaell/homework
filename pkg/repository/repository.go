@@ -12,12 +12,6 @@ type ItemRepository interface {
 	Delete(itemId int) error
 }
 
-type Repository struct {
-	ItemRepository
-}
-
-func NewRepository(db *sqlx.DB) *Repository {
-	return &Repository{
-		ItemRepository: NewItemPostgres(db),
-	}
+func NewItemRepository(db *sqlx.DB) ItemRepository {
+	return NewItemPostgres(db)
 }
