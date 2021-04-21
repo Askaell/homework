@@ -6,10 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Askaell/homework/handler"
-	"github.com/Askaell/homework/repository"
-	"github.com/Askaell/homework/server"
-	"github.com/Askaell/homework/service"
+	"github.com/Askaell/homework/pkg/handler"
+	"github.com/Askaell/homework/pkg/repository"
+	"github.com/Askaell/homework/pkg/server"
+	"github.com/Askaell/homework/pkg/service"
 	"github.com/spf13/viper"
 
 	_ "github.com/lib/pq" //postgres driver
