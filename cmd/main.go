@@ -9,7 +9,6 @@ import (
 	"github.com/Askaell/homework/pkg/handler"
 	"github.com/Askaell/homework/pkg/repository"
 	"github.com/Askaell/homework/pkg/server"
-	"github.com/Askaell/homework/pkg/service"
 	"github.com/spf13/viper"
 
 	_ "github.com/lib/pq" //postgres driver
@@ -33,8 +32,7 @@ func main() {
 	}
 
 	repository := repository.NewRepository(db)
-	service := service.NewService(repository)
-	handler := handler.NewHandler(service)
+	handler := handler.NewHandler(repository)
 
 	server := new(server.Server)
 	go func() {

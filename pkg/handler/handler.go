@@ -1,16 +1,16 @@
 package handler
 
 import (
-	"github.com/Askaell/homework/pkg/service"
+	"github.com/Askaell/homework/pkg/repository"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	service *service.Service
+	repository repository.ItemRepository
 }
 
-func NewHandler(service *service.Service) *Handler {
-	return &Handler{service: service}
+func NewHandler(repository repository.ItemRepository) *Handler {
+	return &Handler{repository: repository}
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
