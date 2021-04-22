@@ -20,7 +20,7 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, newItem)
+	writeResponse(c, http.StatusOK, newItem)
 }
 
 func (h *Handler) getAllItems(c *gin.Context) {
@@ -30,7 +30,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, items)
+	writeResponse(c, http.StatusOK, items)
 }
 
 func (h *Handler) getItemById(c *gin.Context) {
@@ -46,7 +46,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, item)
+	writeResponse(c, http.StatusOK, item)
 }
 
 func (h *Handler) deleteItem(c *gin.Context) {
@@ -62,5 +62,5 @@ func (h *Handler) deleteItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	writeResponse(c, http.StatusNoContent, nil)
 }

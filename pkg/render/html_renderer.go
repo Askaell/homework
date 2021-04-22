@@ -14,7 +14,7 @@ func NewHTMLRenderer() *HTMLRenderer {
 
 func (r *HTMLRenderer) Render(input interface{}) ([]byte, error) {
 	htmlTemplate := template.New("template")
-	htmlTemplate, err := htmlTemplate.Parse(`{{define "T"}} {{.}} {{end}}`)
+	htmlTemplate, err := htmlTemplate.Parse(`{{define "T"}}{{.}}{{end}}`)
 	if err != nil {
 		return nil, err
 	}
