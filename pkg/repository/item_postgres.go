@@ -23,18 +23,29 @@ func (r *ItemPostgres) Create(item models.Item) (*models.Item, error) {
 	}
 
 	var id int
-	createItemQuery := fmt.Sprintf("INSERT INTO %s (name, description, price) VALUES ($1, $2, $3) RETURNING id", itemTable)
-	row := transaction.QueryRow(createItemQuery, item.Name, item.Description, item.Price)
+	createItemQuery := fmt.Sprintf(
+		"INSERT INTO %s (name, description, price, discountPrice, discount, dayItem, vendorCode, category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		itemTable)
+
+	row := transaction.QueryRow(createItemQuery, item.Name, item.Description,
+		item.Price, item.DiscountPrice, item.Discount,
+		item.DayItem, item.VendorCode, item.Category)
+
 	if err := row.Scan(&id); err != nil {
 		transaction.Rollback()
 		return nil, err
 	}
 
 	newItem := &models.Item{
-		Id:          id,
-		Name:        item.Name,
-		Description: item.Description,
-		Price:       item.Price,
+		Id:            id,
+		Name:          item.Name,
+		Description:   item.Description,
+		Price:         item.Price,
+		DiscountPrice: item.DiscountPrice,
+		Discount:      item.Discount,
+		DayItem:       item.DayItem,
+		VendorCode:    item.VendorCode,
+		Category:      item.Category,
 	}
 
 	return newItem, transaction.Commit()
