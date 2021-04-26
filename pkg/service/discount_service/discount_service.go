@@ -1,50 +1,55 @@
 package discount_service
 
 import (
-	"bufio"
-	"io"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
-)
 
-//columns types numbers of discount table
-const (
-	colAmount = 3
-
-	colDiscountType  = 0
-	colDiscountName  = 1
-	colDiscountValue = 2
-)
-
-//columns types of discount table
-const (
-	discountCategory   = "category"
-	discountVendorCode = "item"
-	discountCommon     = "-"
+	"github.com/Askaell/homework/pkg/repository"
 )
 
 type discounts struct {
-	category map[string]float32
-	vendor   map[string]float32
-	common   float32
+	category   map[string]float32
+	vendorCode map[string]float32
+	common     float32
 }
 
 type DiscountService struct {
+	repository repository.ItemRepository
 }
 
-func NewDiscountService() *DiscountService {
-	return &DiscountService{}
+func NewDiscountService(repository repository.ItemRepository) *DiscountService {
+	return &DiscountService{repository: repository}
 }
 
-func (s *DiscountService) Start(url string, time float32) error {
+func (s *DiscountService) Start(url string, activationTime string, timeLocation string) {
+	go func() {
+		for {
+			timeNow, err := getTimeIn(timeLocation)
+			if err != nil {
+				log.Println("time error in discount_service: ", err)
+				return
+			}
 
-}
+			if timeNow.Format("15:04") != activationTime {
+				time.Sleep(20 * time.Second)
+				continue
+			}
 
-func (s *DiscountService) Stop() {
+			discounts, err := s.getDiscounts(url)
+			if err != nil {
+				log.Println("getDiscounts fail: ", err)
+				return
+			}
 
+			if err := s.applyDiscounts(discounts); err != nil {
+				log.Println("applyDiscounts fail: ", err)
+				return
+			}
+
+			time.Sleep(24 * time.Hour)
+		}
+	}()
 }
 
 func (s *DiscountService) getDiscounts(url string) (*discounts, error) {
@@ -62,51 +67,35 @@ func (s *DiscountService) getDiscounts(url string) (*discounts, error) {
 	return discounts, err
 }
 
-func fetchDiscounts(r io.Reader) (*discounts, error) {
-	scanner := bufio.NewScanner(r)
-
-	var commonDiscount float32 = 0
-	categoryDiscount := make(map[string]float32)
-	vendorCodeDiscount := make(map[string]float32)
-
-	lineIdx := 1
-	for scanner.Scan() {
-		columns := strings.Split(strings.TrimSpace(scanner.Text()), ",")
-		if len(columns) != colAmount {
-			continue
-		}
-
-		// scip table header
-		if lineIdx == 1 {
-			lineIdx++
-			continue
-		}
-
-		discountValue, err := strconv.ParseFloat(columns[colDiscountValue], 32)
-		if err != nil {
-			log.Println("Wrong discount file format, at line ", lineIdx)
-			return nil, err
-		}
-		// skip line with zero discount value
-		if discountValue == 0 {
-			continue
-		}
-
-		switch columns[colDiscountType] {
-		case discountCategory:
-			categoryDiscount[columns[colDiscountName]] = float32(discountValue)
-
-		case discountVendorCode:
-			vendorCodeDiscount[columns[colDiscountName]] = float32(discountValue)
-
-		case discountCommon:
-			commonDiscount = float32(discountValue)
-		default:
-			log.Println("Wrong discount type format, at line ", lineIdx)
-			return nil, err
-		}
-		lineIdx++
+func (s *DiscountService) applyDiscounts(d *discounts) error {
+	items, err := s.repository.GetAll()
+	if err != nil {
+		return err
 	}
 
-	return &discounts{categoryDiscount, vendorCodeDiscount, commonDiscount}, nil
+	for _, item := range items {
+		log.Println(item)
+		item.DayItem = false
+		item.Discount = d.common + d.category[item.Category]
+
+		if vendorCodeDiscount := d.vendorCode[item.VendorCode]; vendorCodeDiscount != 0 {
+			item.Discount += vendorCodeDiscount
+			item.DayItem = true
+		}
+
+		item.DiscountPrice = item.Price - item.Price*(float32(item.Discount)/100.0)
+
+		if err := s.repository.Update(item.Id, item); err != nil {
+			return err
+		}
+		log.Println(item)
+	}
+
+	return nil
+}
+
+func getTimeIn(location string) (time.Time, error) {
+	loc, err := time.LoadLocation(location)
+	t := time.Now().In(loc)
+	return t, err
 }
