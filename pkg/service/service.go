@@ -3,7 +3,7 @@ package service
 import "github.com/Askaell/homework/pkg/service/discount_service"
 
 type DiscountService interface {
-	Start(time float32) error
+	Start(url string, time float32) error
 	Stop()
 }
 
