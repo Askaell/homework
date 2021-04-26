@@ -1,6 +1,14 @@
 package main
 
 import (
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/Askaell/homework/pkg/handler"
+	"github.com/Askaell/homework/pkg/repository"
+	"github.com/Askaell/homework/pkg/server"
 	"github.com/Askaell/homework/pkg/service"
 	"github.com/spf13/viper"
 
@@ -8,38 +16,42 @@ import (
 )
 
 func main() {
-	// if err := initConfig(); err != nil {
-	// 	log.Fatalf("error initializating configs: %s", err.Error())
-	// }
+	if err := initConfig(); err != nil {
+		log.Fatalf("error initializating configs: %s", err.Error())
+	}
 
-	// db, err := repository.NewPostgresDB(repository.Config{
-	// 	Host:     viper.GetString("db.host"),
-	// 	Port:     viper.GetString("db.port"),
-	// 	Username: viper.GetString("db.username"),
-	// 	Password: viper.GetString("db.password"),
-	// 	DBname:   viper.GetString("db.dbname"),
-	// 	SSLMode:  viper.GetString("db.sslmode"),
-	// })
-	// if err != nil {
-	// 	log.Fatalf("failed to initialize db: %s", err.Error())
-	// }
+	db, err := repository.NewPostgresDB(repository.Config{
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetString("db.port"),
+		Username: viper.GetString("db.username"),
+		Password: viper.GetString("db.password"),
+		DBname:   viper.GetString("db.dbname"),
+		SSLMode:  viper.GetString("db.sslmode"),
+	})
+	if err != nil {
+		log.Fatalf("failed to initialize db: %s", err.Error())
+	}
 
-	// repository := repository.NewItemRepository(db)
-	// handler := handler.NewHandler(repository)
+	repository := repository.NewItemRepository(db)
 
-	// server := new(server.Server)
-	// go func() {
-	// 	if err := server.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
-	// 		log.Fatalf("error occured while running http server, %s", err.Error())
-	// 	}
-	// }()
+	discountService := service.NewDiscountService(repository)
+	discountService.Start(
+		viper.GetString("discount_service.url"),
+		viper.GetString("discount_service.activationTime"),
+		viper.GetString("discount_service.location"))
 
-	// quit := make(chan os.Signal)
-	// signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-	// <-quit
+	handler := handler.NewHandler(repository)
 
-	discountService := service.NewDiscountService()
-	discountService.Start("https://raw.githubusercontent.com/goarchitecture/lesson-2/feature/lesson-4/assets/discounts.csv", 5)
+	server := new(server.Server)
+	go func() {
+		if err := server.Run(viper.GetString("port"), handler.InitRoutes()); err != nil {
+			log.Fatalf("error occured while running http server, %s", err.Error())
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
 }
 
 func initConfig() error {
