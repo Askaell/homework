@@ -74,7 +74,6 @@ func (s *DiscountService) applyDiscounts(d *discounts) error {
 	}
 
 	for _, item := range items {
-		log.Println(item)
 		item.DayItem = false
 		item.Discount = d.common + d.category[item.Category]
 
@@ -88,7 +87,6 @@ func (s *DiscountService) applyDiscounts(d *discounts) error {
 		if err := s.repository.Update(item.Id, item); err != nil {
 			return err
 		}
-		log.Println(item)
 	}
 
 	return nil
