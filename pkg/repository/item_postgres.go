@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/Askaell/homework/pkg/models"
@@ -130,10 +131,17 @@ func (r *ItemPostgres) Update(itemId int, item models.Item) error {
 		argId++
 	}
 
-	if item.Amount >= 0 {
-		setValues = append(setValues, fmt.Sprintf("amount=$%d", argId))
-		args = append(args, item.Amount)
-		argId++
+	if item.Amount != "" {
+		amount, err := strconv.Atoi(item.Amount)
+		if err != nil {
+			return err
+		}
+
+		if amount >= 0 {
+			setValues = append(setValues, fmt.Sprintf("amount=$%d", argId))
+			args = append(args, item.Amount)
+			argId++
+		}
 	}
 
 	setQuery := strings.Join(setValues, ", ")

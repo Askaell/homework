@@ -10,5 +10,5 @@ type Item struct {
 	DayItem       bool    `json:"dayItem" db:"dayitem"`
 	VendorCode    string  `json:"vendorCode" db:"vendorcode"`
 	Category      string  `json:"category" db:"category"`
-	Amount        int     `json:"amount" db:"amount"`
+	Amount        string  `json:"amount" db:"amount"`
 }
