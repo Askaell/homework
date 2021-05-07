@@ -26,6 +26,13 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			items.GET("/:id", h.getItemById)
 			items.DELETE("/:id", h.deleteItem)
 		}
+
+		warehouse := api.Group("/warehouse")
+		{
+			warehouse.PUT("/:id", h.updateWarehouseItems) //need to use field "value" in query
+			warehouse.GET("", h.getWarehouseAllItems)
+			warehouse.GET("/:id", h.getWarehouseItemById)
+		}
 	}
 
 	return router
