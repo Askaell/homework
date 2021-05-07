@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -49,9 +51,18 @@ func main() {
 		}
 	}()
 
+	// app shutting down
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
+
+	if err := server.Shutdown(context.Background()); err != nil && err != http.ErrServerClosed {
+		log.Printf("error occured on server shutting down: %s", err)
+	}
+
+	if err := db.Close(); err != nil {
+		log.Printf("error occured on db connection close: %s", err)
+	}
 }
 
 func initConfig() error {
