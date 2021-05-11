@@ -7,6 +7,7 @@ import (
 
 type ItemRepository interface {
 	Create(item models.Item) (*models.Item, error)
+	Update(itemId int, item models.Item) error
 	GetAll() ([]models.Item, error)
 	GetById(itemId int) (models.Item, error)
 	Delete(itemId int) error

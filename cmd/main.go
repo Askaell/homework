@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,6 +11,7 @@ import (
 	"github.com/Askaell/homework/pkg/handler"
 	"github.com/Askaell/homework/pkg/repository"
 	"github.com/Askaell/homework/pkg/server"
+	"github.com/Askaell/homework/pkg/service"
 	"github.com/spf13/viper"
 
 	_ "github.com/lib/pq" //postgres driver
@@ -32,6 +35,13 @@ func main() {
 	}
 
 	repository := repository.NewItemRepository(db)
+
+	discountService := service.NewDiscountService(repository)
+	discountService.Start(
+		viper.GetString("discount_service.url"),
+		viper.GetString("discount_service.activationTime"),
+		viper.GetString("discount_service.location"))
+
 	handler := handler.NewHandler(repository)
 
 	server := new(server.Server)
@@ -41,9 +51,18 @@ func main() {
 		}
 	}()
 
+	// app shutting down
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
+
+	if err := server.Shutdown(context.Background()); err != nil && err != http.ErrServerClosed {
+		log.Printf("error occured on server shutting down: %s", err)
+	}
+
+	if err := db.Close(); err != nil {
+		log.Printf("error occured on db connection close: %s", err)
+	}
 }
 
 func initConfig() error {
