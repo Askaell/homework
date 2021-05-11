@@ -8,5 +8,6 @@ CREATE TABLE item
     discount real,
     dayItem boolean,
     vendorCode varchar (255) not null,
-    category varchar (255) not null
+    category varchar (255) not null,
+    amount varchar(255) not null
 );

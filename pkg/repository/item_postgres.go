@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/Askaell/homework/pkg/models"
@@ -24,12 +25,13 @@ func (r *ItemPostgres) Create(item models.Item) (*models.Item, error) {
 
 	var id int
 	createItemQuery := fmt.Sprintf(
-		"INSERT INTO %s (name, description, price, discountPrice, discount, dayItem, vendorCode, category) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
+		"INSERT INTO %s (name, description, price, discountPrice, discount, dayItem, vendorCode, category, amount) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
 		itemTable)
 
 	row := transaction.QueryRow(createItemQuery, item.Name, item.Description,
 		item.Price, item.DiscountPrice, item.Discount,
-		item.DayItem, item.VendorCode, item.Category)
+		item.DayItem, item.VendorCode, item.Category,
+		item.Amount)
 
 	if err := row.Scan(&id); err != nil {
 		transaction.Rollback()
@@ -46,6 +48,7 @@ func (r *ItemPostgres) Create(item models.Item) (*models.Item, error) {
 		DayItem:       item.DayItem,
 		VendorCode:    item.VendorCode,
 		Category:      item.Category,
+		Amount:        item.Amount,
 	}
 
 	return newItem, transaction.Commit()
@@ -126,6 +129,19 @@ func (r *ItemPostgres) Update(itemId int, item models.Item) error {
 		setValues = append(setValues, fmt.Sprintf("category=$%d", argId))
 		args = append(args, item.Category)
 		argId++
+	}
+
+	if item.Amount != "" {
+		amount, err := strconv.Atoi(item.Amount)
+		if err != nil {
+			return err
+		}
+
+		if amount >= 0 {
+			setValues = append(setValues, fmt.Sprintf("amount=$%d", argId))
+			args = append(args, item.Amount)
+			argId++
+		}
 	}
 
 	setQuery := strings.Join(setValues, ", ")
