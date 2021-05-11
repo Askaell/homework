@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Askaell/homework/pkg/models"
 	"github.com/Askaell/homework/pkg/repository"
 )
 
@@ -32,7 +33,7 @@ func (s *DiscountService) Start(url string, activationTime string, timeLocation 
 			}
 
 			if timeNow.Format("15:04") != activationTime {
-				time.Sleep(20 * time.Second)
+				time.Sleep(1 * time.Second)
 				continue
 			}
 
@@ -42,12 +43,15 @@ func (s *DiscountService) Start(url string, activationTime string, timeLocation 
 				return
 			}
 
-			if err := s.applyDiscounts(discounts); err != nil {
+			//getting items from db for apply discounts
+			items, err := s.repository.GetAll()
+			if err != nil {
+				return
+			}
+			if err := s.applyDiscounts(items, discounts); err != nil {
 				log.Println("applyDiscounts fail: ", err)
 				return
 			}
-
-			time.Sleep(24 * time.Hour)
 		}
 	}()
 }
@@ -67,12 +71,7 @@ func (s *DiscountService) getDiscounts(url string) (*discounts, error) {
 	return discounts, err
 }
 
-func (s *DiscountService) applyDiscounts(d *discounts) error {
-	items, err := s.repository.GetAll()
-	if err != nil {
-		return err
-	}
-
+func (s *DiscountService) applyDiscounts(items []models.Item, d *discounts) error {
 	for _, item := range items {
 		item.DayItem = false
 		item.Discount = d.common + d.category[item.Category]
