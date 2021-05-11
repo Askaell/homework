@@ -6,11 +6,11 @@ type Category struct {
 	Name     string
 	ParentId int
 	Parent   *Category
-	Childs   []*Category
+	Childs   []Category
 }
 
 func NewCategory(id int, slug string, name string, parent *Category) *Category {
-	var c *Category
+	var c *Category = &Category{}
 	c.Id = id
 	c.Slug = slug
 	c.Name = name
@@ -31,40 +31,36 @@ func NewCategory(id int, slug string, name string, parent *Category) *Category {
 
 func (c *Category) appendChildToParent() {
 	if c.Parent != nil {
-		c.Parent.Childs = append(c.Parent.Childs, c)
+		c.Parent.Childs = append(c.Parent.Childs, *c)
 	}
 }
 
 func (c *Category) GetRootParent() *Category {
-	if c.Id == c.ParentId {
+	if c.Parent == nil {
 		return c
 	}
 	return c.Parent.GetRootParent()
 }
 
 func (c *Category) GetBreadCrumbs() Categories {
-	if c.Id == c.ParentId {
-		return []*Category{c}
+	if c.Parent == nil {
+		return []Category{*c}
 	}
-	return append(c.Parent.GetBreadCrumbs(), c)
+	return append(c.Parent.GetBreadCrumbs(), *c)
 }
 
-type Categories []*Category
+type Categories []Category
 
 func (cs *Categories) Names() (names []string) {
 	for _, c := range *cs {
-		if c != nil {
-			names = append(names, c.Name)
-		}
+		names = append(names, c.Name)
 	}
 	return names
 }
 
 func (cs *Categories) Slugs() (slugs []string) {
 	for _, c := range *cs {
-		if c != nil {
-			slugs = append(slugs, c.Slug)
-		}
+		slugs = append(slugs, c.Slug)
 	}
 	return slugs
 }
