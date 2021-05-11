@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -11,6 +12,7 @@ import (
 func (h *Handler) createItem(c *gin.Context) {
 	var input models.Item
 	if err := c.BindJSON(&input); err != nil {
+		log.Println(input)
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 	}
 
@@ -20,7 +22,7 @@ func (h *Handler) createItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, newItem)
+	writeResponse(c, http.StatusOK, newItem)
 }
 
 func (h *Handler) getAllItems(c *gin.Context) {
@@ -30,7 +32,7 @@ func (h *Handler) getAllItems(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, items)
+	writeResponse(c, http.StatusOK, items)
 }
 
 func (h *Handler) getItemById(c *gin.Context) {
@@ -46,7 +48,7 @@ func (h *Handler) getItemById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, item)
+	writeResponse(c, http.StatusOK, item)
 }
 
 func (h *Handler) deleteItem(c *gin.Context) {
@@ -62,5 +64,26 @@ func (h *Handler) deleteItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	writeResponse(c, http.StatusNoContent, nil)
+}
+
+func (h *Handler) updateItem(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "invalid id param")
+		return
+	}
+
+	var input models.Item
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err := h.repository.Update(id, input); err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	writeResponse(c, http.StatusOK, nil)
 }

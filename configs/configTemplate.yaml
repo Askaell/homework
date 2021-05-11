@@ -1,5 +1,10 @@
 port: ""
 
+discount_service:
+  url: ""
+  activationTime: ""
+  location: ""
+
 db:
   username: ""
   password: ""
